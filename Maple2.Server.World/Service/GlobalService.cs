@@ -21,7 +21,7 @@ public partial class GlobalService : Global.GlobalBase {
     }
 
     public override Task<LoginResponse> Login(LoginRequest request, ServerCallContext context) {
-#if !DEBUG // Allow empty username for testing
+
         if (string.IsNullOrWhiteSpace(request.Username)) {
             return Task.FromResult(new LoginResponse {
                 Code = LoginResponse.Types.Code.ErrorId,
@@ -35,7 +35,6 @@ public partial class GlobalService : Global.GlobalBase {
                 Message = "Invalid Password.",
             });
         }
-#endif
 
         // Normalize username
         string username = request.Username.Trim().ToLower();
