@@ -248,8 +248,8 @@ public partial class GameStorage {
 
             var player = new Player(account, character, objectId) {
                 Currency = new Currency {
-                    Meret = account.Currency.Meret,
-                    GameMeret = account.Currency.GameMeret,
+                    Meret = account.Currency?.Meret ?? 0L,
+                    GameMeret = account.Currency?.GameMeret ?? 0L,
                     Meso = character.Currency.Meso,
                     EventMeret = character.Currency.EventMeret,
                     ValorToken = character.Currency.ValorToken,
@@ -260,7 +260,7 @@ public partial class GameStorage {
                     MentorToken = character.Currency.MentorToken,
                     MenteeToken = character.Currency.MenteeToken,
                     StarPoint = character.Currency.StarPoint,
-                    MesoToken = account.Currency.MesoToken,
+                    MesoToken = account.Currency?.MesoToken ?? 0L,
                 },
                 Unlock = Context.CharacterUnlock.Find(characterId),
                 Home = home,
