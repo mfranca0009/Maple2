@@ -25,6 +25,10 @@ CultureInfo.CurrentCulture = new("en-US");
 
 DotEnv.Load();
 
+XmlParser parser = new XmlParser();
+parser.Parse("C:\\MapleStory2\\Data\\Xml.m2d", "table/constants.xml");
+parser.Parse("C:\\MapleStory2\\Data\\Server.m2d", "table/Server/constants.xml");
+
 IConfigurationRoot configRoot = new ConfigurationBuilder()
     .SetBasePath(Directory.GetCurrentDirectory())
     .AddJsonFile("appsettings.json", true, true)
