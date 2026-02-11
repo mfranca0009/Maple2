@@ -9,45 +9,43 @@ using static Maple2.Tools.Crypto.CryptoMan;
 
 namespace Maple2.Tools;
 
-internal class M2dParser {
-    private MemoryMappedFile pDataMappedMemFile;
-    private PackNodeList pNodeList;
-    private string headerFilePath;
-    private string dataFilePath;
-
-    public M2dParser() {
-        headerFilePath = string.Empty;
-        dataFilePath = string.Empty;
-    }
-
-    public string ParseM2d(string m2dFilePath, string xmlTreePath) {
-        dataFilePath = Dir_BackSlashToSlash(m2dFilePath);
+internal static class M2dParser {
+    public static string ParseM2d(string m2dFilePath, string xmlTreePath) {
+        MemoryMappedFile? packDataMemMappedFile = null;
+        PackNodeList? packNodeList = null;
+        string headerFilePath = string.Empty;
+        string dataFilePath = Dir_BackSlashToSlash(m2dFilePath);
         string[] xmlTreePathPieces = Dir_BackSlashToSlash(xmlTreePath).Split('/');
         int documentIndex = xmlTreePathPieces.Length-1;
         int totalKeys = xmlTreePathPieces.Length - 1;
         int foundKeyCounter = 0;
 
-        if (!SetHeaderUOL()) {
+        if (!SetHeaderUOL(dataFilePath, ref headerFilePath)) {
             return string.Empty;
         }
 
-        InitializeStream(dataFilePath);
+        InitializeStream(dataFilePath, headerFilePath, ref packDataMemMappedFile, ref packNodeList);
 
-        PackFileEntry? packFileEntry = ParseChildren(pNodeList, xmlTreePathPieces, foundKeyCounter, totalKeys);
+        PackFileEntry? packFileEntry = ParseChildren(packNodeList, xmlTreePathPieces, foundKeyCounter, totalKeys);
 
         var pFileHeader = packFileEntry?.FileHeader ?? null;
         byte[]? xmlBytes = null;
         if (pFileHeader != null) {
-            xmlBytes = DecryptData(pFileHeader, pDataMappedMemFile);
+            xmlBytes = DecryptData(pFileHeader, packDataMemMappedFile);
+        }
+
+        if (packDataMemMappedFile != null) {
+            packDataMemMappedFile.Dispose();
+            packDataMemMappedFile = null;
         }
 
         // convert bytes into string
         return Encoding.UTF8.GetString(xmlBytes);
     }
 
-    private PackFileEntry? ParseChildren(PackNodeList pckNodeList, string[] xmlTreePieces, int keyCounter, int totalKeys) {
+    private static PackFileEntry? ParseChildren(PackNodeList packNodeList, string[] xmlTreePieces, int keyCounter, int totalKeys) {
         PackFileEntry? packFileEntry = null;
-        foreach (KeyValuePair<string, PackNodeList> packNodeListPair in pckNodeList.Children) {
+        foreach (KeyValuePair<string, PackNodeList> packNodeListPair in packNodeList.Children) {
             if (packNodeListPair.Key == Path.Join(xmlTreePieces[keyCounter], "/")) {
                 if (keyCounter == totalKeys-1) {
                     return ParseEntries(packNodeListPair.Value.Entries, xmlTreePieces, totalKeys);
@@ -59,7 +57,7 @@ internal class M2dParser {
         return packFileEntry;
     }
 
-    private PackFileEntry? ParseEntries(Dictionary<string, PackFileEntry> packFileEntries, string[] xmlTreePieces, int totalKeys) {
+    private static PackFileEntry? ParseEntries(Dictionary<string, PackFileEntry> packFileEntries, string[] xmlTreePieces, int totalKeys) {
         PackFileEntry? packFileEntry = null;
         foreach(KeyValuePair<string,PackFileEntry> packFileEntryPair in packFileEntries) {
             if (packFileEntryPair.Key == xmlTreePieces[totalKeys]) {
@@ -70,12 +68,12 @@ internal class M2dParser {
         return packFileEntry;
     }
 
-    private bool SetHeaderUOL() {
+    private static bool SetHeaderUOL(string dataFilePath, ref string headerFilePath) {
         headerFilePath = dataFilePath.Replace(".m2d", ".m2h");
         return File.Exists(headerFilePath);
     }
 
-    private void InitializeStream(string sDataUOL) {
+    private static void InitializeStream(string sDataUOL, string headerFilePath, ref MemoryMappedFile? packDataMemMappedFile, ref PackNodeList? packNodeList) {
         IPackStreamVerBase pStream;
         using (BinaryReader pHeader = new BinaryReader(File.OpenRead(headerFilePath))) {
             // Construct a new packed stream from the header data
@@ -119,36 +117,29 @@ internal class M2dParser {
             }
         }
 
-        pDataMappedMemFile = MemoryMappedFile.CreateFromFile(sDataUOL);
+        packDataMemMappedFile = MemoryMappedFile.CreateFromFile(sDataUOL);
 
-        InitializeTree(pStream);
+        InitializeTree(pStream, ref packNodeList);
     }
 
-    private void InitializeTree(IPackStreamVerBase pStream) {
-        // Insert the root node (file)
-        string[] aPath = headerFilePath.Replace(".m2h", "").Split('/');
-        // pTreeView.Nodes.Add(new PackNode(pStream, aPath[^1]));
+    private static void InitializeTree(IPackStreamVerBase packStream, ref PackNodeList? packNodeList) {
+        packNodeList?.InternalRelease();
+        packNodeList = new PackNodeList("/");
 
-        pNodeList?.InternalRelease();
-        pNodeList = new PackNodeList("/");
-
-        foreach (PackFileEntry pEntry in pStream.GetFileList()) {
+        foreach (PackFileEntry pEntry in packStream.GetFileList()) {
             if (pEntry.Name.Contains('/')) {
                 string sPath = pEntry.Name;
-                PackNodeList pCurList = pNodeList;
+                PackNodeList pCurList = packNodeList;
 
                 while (sPath.Contains('/')) {
                     string sDir = sPath[..(sPath.IndexOf('/') + 1)];
-                    if (!pCurList.Children.TryGetValue(sDir, out PackNodeList value)) {
+
+                    if (!pCurList.Children.TryGetValue(sDir, out PackNodeList? value)) {
                         value = new PackNodeList(sDir);
                         pCurList.Children.Add(sDir, value);
-                        if (pCurList == pNodeList) {
-                            // pTreeView.Nodes[0].Nodes.Add(new PackNode(pCurList.Children[sDir], sDir));
-                        }
                     }
 
                     pCurList = value;
-
                     sPath = sPath[(sPath.IndexOf('/') + 1)..];
                 }
 
@@ -158,14 +149,8 @@ internal class M2dParser {
             }
 
             pEntry.TreeName = pEntry.Name;
-
-            pNodeList.Entries.Add(pEntry.Name, pEntry);
-           // pTreeView.Nodes[0].Nodes.Add(new PackNode(pEntry, pEntry.Name));
+            packNodeList.Entries.Add(pEntry.Name, pEntry);
         }
-
-        // Sort all nodes
-        // pTreeView.Sort();
-        // pTreeView.Nodes[0].Expand();
     }
 
     private static string Dir_BackSlashToSlash(string sDir) {

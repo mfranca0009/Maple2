@@ -25,9 +25,19 @@ CultureInfo.CurrentCulture = new("en-US");
 
 DotEnv.Load();
 
-XmlParser parser = new XmlParser();
-parser.Parse("C:\\MapleStory2\\Data\\Xml.m2d", "table/constants.xml");
-parser.Parse("C:\\MapleStory2\\Data\\Server.m2d", "table/Server/constants.xml");
+// Server.m2d
+var additionEffectGroup = XmlParser.Parse<AdditionalEffectGroup>();
+var adventureExpTable = XmlParser.Parse<AdventureExpTable>();
+var adventureExpIdTable = XmlParser.Parse<AdventureExpIdTable>();
+var arcadeReward = XmlParser.Parse<ArcadeReward>();
+var attendGift = XmlParser.Parse<AttendGift>();
+var attendGiftEvent = XmlParser.Parse<AttendGiftEvent>();
+var bonusGame = XmlParser.Parse<BonusGame>();
+
+var serverConstants = XmlParser.Parse<ServerConstants>();
+
+// Xml.m2d
+var constants = XmlParser.Parse<Constants>();
 
 IConfigurationRoot configRoot = new ConfigurationBuilder()
     .SetBasePath(Directory.GetCurrentDirectory())

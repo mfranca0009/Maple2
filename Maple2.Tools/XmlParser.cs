@@ -1,20 +1,21 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using System.IO;
+using System.Xml.Linq;
+using System.Xml.Serialization;
 
 namespace Maple2.Tools;
 
-public class XmlParser {
-    private M2dParser m2dParser;
+public static class XmlParser {
+    public static T? Parse<T>() where T : class, IXmlModel, new() {
+        var xmlString = M2dParser.ParseM2d(new T().FilePath, new T().XmlTreePath).Trim();
+        var doc = XDocument.Parse(xmlString);
 
-    public XmlParser() {
-        m2dParser = new M2dParser();
-    }
+        if (string.IsNullOrWhiteSpace(xmlString)) return null;
 
-    public void Parse(string m2dFilePath, string xmlTreePath) {
-        string xmlString = m2dParser.ParseM2d(m2dFilePath, xmlTreePath);
-
+        var serializer = new XmlSerializer(typeof(T));
+        using (var reader = new StringReader(xmlString)) {
+            var config = (T?) serializer.Deserialize(reader);
+            config?.Initialize();
+            return config;
+        }
     }
 }
