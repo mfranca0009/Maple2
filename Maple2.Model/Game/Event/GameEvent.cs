@@ -2,6 +2,7 @@
 using Maple2.Model.Metadata;
 using Maple2.PacketLib.Tools;
 using Maple2.Tools;
+using AttendGift = Maple2.Model.Metadata.AttendGift;
 
 namespace Maple2.Model.Game.Event;
 

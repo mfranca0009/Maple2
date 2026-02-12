@@ -33,8 +33,23 @@ var arcadeReward = XmlParser.Parse<ArcadeReward>();
 var attendGift = XmlParser.Parse<AttendGift>();
 var attendGiftEvent = XmlParser.Parse<AttendGiftEvent>();
 var bonusGame = XmlParser.Parse<BonusGame>();
-
+var bonusGameDrop = XmlParser.Parse<BonusGameDrop>();
+var combineSpawnGroup = XmlParser.Parse<CombineSpawnGroup>();
+var combineSpawnInteractObject = XmlParser.Parse<CombineSpawnInteractObject>();
+var combineSpawnNpc = XmlParser.Parse<CombineSpawnNpc>();
 var serverConstants = XmlParser.Parse<ServerConstants>();
+var defaultCharacterInfo = XmlParser.Parse<DefaultCharacterInfo>();
+var designersHomeLayout = XmlParser.Parse<DesignersHomeLayout>();
+var dungeonScaleStat = XmlParser.Parse<DungeonScaleStat>();
+var dungeonScoreBonus = XmlParser.Parse<DungeonScoreBonus>();
+var enchantOptionTable = XmlParser.Parse<EnchantOptionTable>();
+var enchantScroll = XmlParser.Parse<EnchantScroll>();
+var exceptEpicRestart2 = XmlParser.Parse<ExceptEpicRestart2>();
+var exceptEpicRestart = XmlParser.Parse<ExceptEpicRestart>();
+var exploreExpTable = XmlParser.Parse<ExploreExpTable>();
+var fieldRestrainTable = XmlParser.Parse<FieldRestrainTable>();
+var fish = XmlParser.Parse<Fish>();
+var fishingSpot = XmlParser.Parse<FishingSpot>();
 
 // Xml.m2d
 var constants = XmlParser.Parse<Constants>();

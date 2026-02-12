@@ -1,5 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Globalization;
+using System.Linq;
+using System.Numerics;
 using System.Xml.Serialization;
 
 namespace Maple2.Tools;
@@ -7,17 +10,32 @@ namespace Maple2.Tools;
 public class EffectGroupEntry {
     [XmlAttribute("groupId")]
     public int GroupId { get; set; }
-
     [XmlElement("value")]
     public List<EffectValue> Values { get; set; } = [];
 }
 
+public record Effect(int Id, int Level);
 public class EffectValue {
     [XmlAttribute("effectId")]
-    public string EffectId { get; set; }
-
+    public string EffectIdRaw { get; set; }
     [XmlAttribute("effectLevel")]
-    public string EffectLevel { get; set; }
+    public string EffectLevelRaw { get; set; }
+    [XmlIgnore]
+    public List<Effect> Effects { get; set; } = [];
+
+    public void Initialize() {
+        var ids = ParseIntArray(EffectIdRaw);
+        var levels = ParseIntArray(EffectLevelRaw);
+
+        // Zips the two arrays into a single list of Effect objects
+        // If one array is shorter, Zip stops at the end of the shortest one
+        Effects = ids.Zip(levels, (id, lvl) => new Effect(id, lvl)).ToList();
+    }
+
+    private int[] ParseIntArray(string raw) {
+        if (string.IsNullOrWhiteSpace(raw)) return Array.Empty<int>();
+        return raw.Split(',').Select(s => int.Parse(s.Trim())).ToArray();
+    }
 }
 
 public class AdventureExpEntry {
@@ -108,8 +126,87 @@ public class BonusGameEntry {
 public class BonusGameSlot {
     [XmlAttribute("minProp")]
     public int MinProp { get; set; }
-    [XmlAttribute("MaxProp")]
+    [XmlAttribute("maxProp")]
     public int maxProp { get; set; }
+}
+
+public class BonusGameDropEntry {
+    [XmlAttribute("gameType")]
+    public int GameType { get; set; }
+    [XmlAttribute("gameID")]
+    public int GameId { get; set; }
+    [XmlAttribute("locale")]
+    public string Locale { get; set; }
+    [XmlAttribute("feature")]
+    public string Feature { get; set; }
+    [XmlElement("item")]
+    public List<BonusGameDropItem> Items { get; set; } = [];
+}
+
+public class BonusGameDropItem {
+    [XmlAttribute("id")]
+    public int Id { get; set; }
+    [XmlAttribute("rank")]
+    public int Rank { get; set; }
+    [XmlAttribute("count")]
+    public int Count { get; set; }
+    [XmlAttribute("prop")]
+    public int Prop { get; set; }
+    [XmlAttribute("notice")]
+    public bool Notice { get; set; }
+}
+
+public class CombineSpawnGroupEntry {
+    [XmlAttribute("groupId")]
+    public int GroupId { get; set; }
+    [XmlAttribute("groupType")]
+    public string GroupType { get; set; }
+    [XmlAttribute("combineCount")]
+    public int CombineCount { get; set; }
+    [XmlAttribute("resetTick")]
+    public int ResetTick { get; set; }
+    [XmlAttribute("fieldId")]
+    public int FieldId { get; set; }
+    [XmlAttribute("feature")]
+    public string Feature { get; set; }
+}
+
+public class CombineSpawnInteractObjectEntry {
+    [XmlAttribute("combineId")]
+    public int CombineId { get; set; }
+    [XmlAttribute("groupId")]
+    public int GroupId { get; set; }
+    [XmlAttribute("weight")]
+    public int Weight { get; set; }
+    [XmlAttribute("regionSpawnId")]
+    public int RegionSpawnId { get; set; }
+    [XmlAttribute("interactId")]
+    public int InteractId { get; set; }
+    [XmlAttribute("model")]
+    public string Model { get; set; }
+    [XmlAttribute("asset")]
+    public string Asset { get; set; }
+    [XmlAttribute("normal")]
+    public string Normal { get; set; }
+    [XmlAttribute("reactable")]
+    public string Reactable { get; set; }
+    [XmlAttribute("scale")]
+    public float Scale { get; set; }
+    [XmlAttribute("feature")]
+    public string Feature { get; set; }
+}
+
+public class CombineSpawnNpcEntry {
+    [XmlAttribute("combineId")]
+    public int CombineId { get; set; }
+    [XmlAttribute("groupId")]
+    public int GroupId { get; set; }
+    [XmlAttribute("weight")]
+    public int Weight { get; set; }
+    [XmlAttribute("spawnId")]
+    public int SpawnId { get; set; }
+    [XmlAttribute("feature")]
+    public string Feature { get; set; }
 }
 
 public class ConstantsEntry {
@@ -119,4 +216,426 @@ public class ConstantsEntry {
     public string Value { get; set; }
     [XmlAttribute("locale")]
     public string Locale { get; set; }
+}
+
+public class DefaultCharacterInfoGenderData {
+    [XmlAttribute("value")]
+    public int Value { get; set; }
+    [XmlElement("skin")]
+    public DefaultCharacterInfoSkinData Skin { get; set; }
+    [XmlArray("items")]
+    [XmlArrayItem("item")]
+    public List<DefaultCharacterInfoItem> Items { get; set; } = [];
+}
+
+public class DefaultCharacterInfoSkinData {
+    [XmlAttribute("colorPaletteID")]
+    public int ColorPaletteId { get; set; }
+    [XmlAttribute("colorSN")]
+    public int ColorSn { get; set; }
+}
+
+public class DefaultCharacterInfoItem {
+    [XmlAttribute("id")]
+    public int Id { get; set; }
+    [XmlAttribute("slotHint")]
+    public string SlotHint { get; set; }
+    [XmlAttribute("colorPaletteID")]
+    public int ColorPaletteId { get; set; }
+    [XmlAttribute("colorSN")]
+    public int ColorSn { get; set; }
+    [XmlArray("controls")]
+    [XmlArrayItem("control")]
+    public List<DefaultCharacterInfoItemControl> Controls { get; set; } = [];
+}
+
+public class DefaultCharacterInfoItemControl {
+    [XmlAttribute("index")]
+    public int Index { get; set; }
+    [XmlAttribute("scale")]
+    public double Scale { get; set; }
+    [XmlAttribute("position")]
+    public string PositionRaw { get; set; }
+    [XmlAttribute("rotation")]
+    public string RotationRaw { get; set; }
+    [XmlIgnore]
+    public Vector3 Position { get; set; }
+    [XmlIgnore]
+    public Vector3 Rotation { get; set; }
+
+    public void Initialize() {
+        Position = ParseVector(PositionRaw);
+        Rotation = ParseVector(RotationRaw);
+    }
+
+    private Vector3 ParseVector(string raw) {
+        if (string.IsNullOrWhiteSpace(raw)) return Vector3.Zero;
+
+        var parts = raw.Split(new[] { ',' }, StringSplitOptions.RemoveEmptyEntries);
+        if (parts.Length != 3) return Vector3.Zero;
+
+        return new Vector3(
+            float.Parse(parts[0].Trim(), CultureInfo.InvariantCulture),
+            float.Parse(parts[1].Trim(), CultureInfo.InvariantCulture),
+            float.Parse(parts[2].Trim(), CultureInfo.InvariantCulture)
+        );
+    }
+}
+
+public class DesignersHomeLayoutItemEntry {
+    [XmlAttribute("sn")]
+    public int Sn { get; set; }
+    [XmlAttribute("index")]
+    public int Index { get; set; }
+    [XmlAttribute("visible")]
+    public bool Visible { get; set; }
+    [XmlAttribute("category")]
+    public bool Category { get; set; }
+    [XmlIgnore]
+    public DesignersHomeLayoutCategoryEntry ParentCategory { get; set; }
+}
+
+public class DesignersHomeLayoutCategoryEntry {
+    [XmlAttribute("stringId")]
+    public int StringId { get; set; }
+    [XmlAttribute("name")]
+    public string Name { get; set; }
+    [XmlAttribute("colorIndex")]
+    public int ColorIndex { get; set; }
+    [XmlAttribute("indexes")]
+    public string IndexesRaw { get; set; }
+    [XmlIgnore]
+    public int[] IndexList { get; private set; }
+    [XmlIgnore]
+    public List<DesignersHomeLayoutItemEntry> LinkedItems { get; set; } = [];
+
+    public void Initialize() {
+        if (!string.IsNullOrWhiteSpace(IndexesRaw)) {
+            IndexList = IndexesRaw.Split(',')
+                .Select(s => int.Parse(s.Trim()))
+                .ToArray();
+        } else {
+            IndexList = Array.Empty<int>();
+        }
+    }
+}
+
+public class DungeonScaleStatEntry {
+    [XmlAttribute("dungeonScaleStatID")]
+    public int DungeonScaleStatId { get; set; }
+    [XmlAttribute("scaleStatRate")]
+    public float ScaleStatRate { get; set; }
+    [XmlAttribute("scaleBaseTap")]
+    public int ScaleBaseTap { get; set; }
+    [XmlAttribute("scaleBaseDef")]
+    public int ScaleBaseDef { get; set; }
+    [XmlAttribute("scaleBaseSpaRate")]
+    public float ScaleBaseSpaRate { get; set; }
+}
+
+public class DungeonScoreBonusEntry {
+    [XmlAttribute("bonusId")]
+    public int BonusId { get; set; }
+    [XmlAttribute("requireScore")]
+    public int RequireScore { get; set; }
+    [XmlAttribute("itemId")]
+    public int ItemId { get; set; }
+    [XmlAttribute("count")]
+    public int Count { get; set; }
+}
+
+public class EnchantOptionEntry {
+    [XmlAttribute("id")]
+    public int Id { get; set; }
+    [XmlAttribute("slot")]
+    public int Slot { get; set; }
+    [XmlAttribute("grade")]
+    public int Grade { get; set; }
+    [XmlAttribute("rank")]
+    public int Rank { get; set; }
+    [XmlAttribute("rate")]
+    public float Rate { get; set; }
+    [XmlAttribute("minLv")]
+    public int MinLv { get; set; }
+    [XmlAttribute("maxLv")]
+    public int MaxLv { get; set; }
+    [XmlAttribute("option")]
+    public string OptionRaw { get; set; }
+    [XmlIgnore]
+    public int[] Options { get; set; } = [];
+
+    public void Initialize() {
+        if (!string.IsNullOrWhiteSpace(OptionRaw)) {
+            Options = OptionRaw.Split(',')
+                .Select(s => int.Parse(s.Trim()))
+                .ToArray();
+        }
+    }
+}
+
+public class EnchantScrollEntry {
+    [XmlAttribute("id")]
+    public int Id { get; set; }
+    [XmlAttribute("scrollType")]
+    public int ScrollType { get; set; }
+    [XmlAttribute("grade")]
+    public string GradeRaw { get; set; }
+    [XmlIgnore]
+    public int[] Grade { get; set; }
+    [XmlAttribute("successProp")]
+    public string SuccessPropRaw { get; set; }
+    [XmlIgnore]
+    public int[] SuccessProp { get; set; }
+    [XmlAttribute("minLv")]
+    public int MinLv { get; set; }
+    [XmlAttribute("maxLv")]
+    public int MaxLv { get; set; }
+    [XmlAttribute("minGrade")]
+    public string MinGradeRaw {
+        get => MinGrade.ToString();
+        set => MinGrade = string.IsNullOrWhiteSpace(value) ? 0 : int.Parse(value);
+    }
+    [XmlIgnore]
+    public int MinGrade { get; set; }
+    [XmlAttribute("maxGrade")]
+    public string MaxGradeRaw {
+        get => MaxGrade.ToString();
+        set => MaxGrade = string.IsNullOrWhiteSpace(value) ? 0 : int.Parse(value);
+    }
+    [XmlIgnore]
+    public int MaxGrade { get; set; }
+    [XmlAttribute("slot")]
+    public string SlotRaw { get; set; }
+    [XmlIgnore]
+    public int[] Slot { get; set; }
+    [XmlAttribute("rank")]
+    public string RankRaw { get; set; }
+    [XmlIgnore]
+    public int[] Rank { get; set; }
+    [XmlAttribute("isLockTrade")]
+    public string IsLockTradeRaw { get; set; }
+    [XmlIgnore]
+    public bool IsLockTrade { get; set; }
+    [XmlAttribute("disableBreak")]
+    public bool DisableBreak { get; set; }
+    [XmlAttribute("feature")]
+    public string Feature { get; set; }
+    [XmlAttribute("locale")]
+    public string Locale { get; set; }
+
+    public void Initialize() {
+        Grade = ParseIntArray(GradeRaw);
+        SuccessProp = ParseIntArray(SuccessPropRaw);
+        Slot = ParseIntArray(SlotRaw);
+        Rank = ParseIntArray(RankRaw);
+
+        IsLockTrade = IsLockTradeRaw == "True";
+    }
+
+    private int[] ParseIntArray(string raw) {
+        if (string.IsNullOrWhiteSpace(raw)) return [];
+        return raw.Split(',')
+                  .Select(s => int.Parse(s.Trim()))
+                  .ToArray();
+    }
+}
+
+public class ExceptEpicRestartEntry {
+    [XmlAttribute("questID")]
+    public string QuestIdRaw { get; set; }
+
+    [XmlIgnore]
+    public int MinQuestId { get; private set; }
+
+    [XmlIgnore]
+    public int MaxQuestId { get; private set; }
+
+    [XmlIgnore]
+    public bool IsRange => MinQuestId != MaxQuestId;
+
+    public void Initialize() {
+        if (string.IsNullOrWhiteSpace(QuestIdRaw)) return;
+
+        if (QuestIdRaw.Contains('-')) {
+            var parts = QuestIdRaw.Split('-');
+            if (parts.Length == 2) {
+                MinQuestId = int.Parse(parts[0].Trim());
+                MaxQuestId = int.Parse(parts[1].Trim());
+            }
+        } else {
+            MinQuestId = MaxQuestId = int.Parse(QuestIdRaw.Trim());
+        }
+    }
+
+    public bool Contains(int id) => id >= MinQuestId && id <= MaxQuestId;
+}
+
+public class ExploreExpTableEntry {	
+    [XmlAttribute("level")]
+    public int Level { get; set; }
+    [XmlAttribute("mapCommon")]
+    public int MapCommon { get; set; }
+    [XmlAttribute("mapHidden")]
+    public int MapHidden { get; set; }
+    [XmlAttribute("taxi")]
+    public int Taxi { get; set; }
+    [XmlAttribute("telescope")]
+    public int Telescope { get; set; }
+    [XmlAttribute("rareChestFirst")]
+    public int RareChestFirst { get; set; }
+    [XmlAttribute("rareChest")]
+    public int RareChest { get; set; }
+    [XmlAttribute("normalChest")]
+    public int NormalChest { get; set; }
+    [XmlAttribute("expDrop")]
+    public int ExpDrop { get; set; }
+    [XmlAttribute("musicMastery1")]
+    public int MusicMastery1;
+    [XmlAttribute("musicMastery2")]
+    public int MusicMastery2;
+    [XmlAttribute("musicMastery3")]
+    public int MusicMastery3;
+    [XmlAttribute("musicMastery4")]
+    public int MusicMastery4;
+    [XmlAttribute("arcade")]
+    public int Arcade { get; set; }
+    [XmlAttribute("fishing")]
+    public int Fishing { get; set; }
+}
+
+public class FieldRestrainTableEntry {
+    [XmlAttribute("id")]
+    public int Id { get; set; }
+    [XmlAttribute("reduceRate")]
+    public int ReduceRate { get; set; }
+    [XmlElement("setItem")]
+    public List<FieldRestrainTableSetItem> FieldRestrainTableSetItems { get; set; } = [];
+}
+
+public class FieldRestrainTableSetItem {
+    [XmlAttribute("id")]
+    public int Id { get; set; }
+    [XmlElement("v")]
+    public List<FieldRestrainTableSetItemAccRate> AccRates { get; set; } = [];
+}
+
+public class FieldRestrainTableSetItemAccRate {
+    [XmlAttribute("accRate")]
+    public int AccRate { get; set; }
+}
+
+public class FishEntry {
+    [XmlAttribute("id")]
+    public int Id { get; set; }
+    [XmlAttribute("fishingBook")]
+    public int FishingBook { get; set; }
+    [XmlAttribute("companion")]
+    public int Companion { get; set; }
+    [XmlAttribute("habitat")]
+    public string Habitat { get; set; }
+    [XmlAttribute("fishMastery")]
+    public int FishMastery { get; set; }
+    [XmlAttribute("lv")]
+    public int Lv { get; set; }
+    [XmlAttribute("rank")]
+    public int Rank { get; set; }
+    [XmlAttribute("pointCount")]
+    public int PointCount { get; set; }
+    [XmlAttribute("masteryPoint")]
+    public int MasteryPoint { get; set; }
+    [XmlAttribute("exp")]
+    public int Exp { get; set; }
+    [XmlAttribute("fishingTime")]
+    public int FishingTime { get; set; }
+    [XmlAttribute("catchProp")]
+    public int CatchProp { get; set; }
+    [XmlAttribute("baitProp")]
+    public int BaitProp { get; set; }
+    [XmlAttribute("smallSize")]
+    public string SmallSizeRaw { get; set; }
+
+    [XmlIgnore]
+    public int MinSmallSize { get; set; }
+    [XmlIgnore]
+    public int MaxSmallSize { get; set; }
+    [XmlAttribute("bigSize")]
+    public string BigSizeRaw { get; set; }
+    [XmlIgnore]
+    public int MinBigSize { get; set; }
+    [XmlIgnore]
+    public int MaxBigSize { get; set; }
+    [XmlAttribute("bait")]
+    public string BaitRaw { get; set; }
+    [XmlIgnore]
+    public int[] Bait { get; set; }
+    [XmlAttribute("individualDropBoxID")]
+    public int IndividualDropBoxId { get; set; }
+    [XmlAttribute("ignoreSpotMastery")]
+    public bool IgnoreSpotMastery { get; set; }
+    [XmlAttribute("feature")]
+    public string Feature { get; set; }
+
+    public void Initialize() {
+        if (!string.IsNullOrWhiteSpace(SmallSizeRaw)) {
+            if (SmallSizeRaw.Contains('-')) {
+                var parts = SmallSizeRaw.Split('-');
+                if (parts.Length == 2) {
+                    MinSmallSize = int.Parse(parts[0].Trim());
+                    MaxSmallSize = int.Parse(parts[1].Trim());
+                }
+            } else {
+                MinSmallSize = MaxSmallSize = int.Parse(SmallSizeRaw.Trim());
+            }
+        }
+
+        if (!string.IsNullOrWhiteSpace(BigSizeRaw)) {
+            if (BigSizeRaw.Contains('-')) {
+                var parts = BigSizeRaw.Split('-');
+                if (parts.Length == 2) {
+                    MinBigSize = int.Parse(parts[0].Trim());
+                    MaxBigSize = int.Parse(parts[1].Trim());
+                }
+            } else {
+                MinBigSize = MaxBigSize = int.Parse(BigSizeRaw.Trim());
+            }
+        }
+    }
+}
+
+public class FishingSpotEntry {
+    [XmlAttribute("id")]
+    public string Id { get; set; }      // All IDs have a leading zero, not sure if it's important or not, storing as string to retain the leading zero for now.
+    [XmlAttribute("liquidType")]
+    public string LiquidType { get; set; }
+    [XmlAttribute("minMastery")]
+    public int MinMastery { get; set; }
+    [XmlAttribute("maxMastery")]
+    public int MaxMastery { get; set; }
+    [XmlAttribute("globalFishBoxID")]
+    public int GlobalFishBoxId { get; set; }
+    [XmlAttribute("individualFishBoxID")]
+    public string IndividualFishBoxIdRaw { get; set; }
+    [XmlIgnore]
+    public int IndividualFishBoxId { get; set; }
+    [XmlAttribute("globalDropBoxId")]
+    public int GlobalDropBoxId { get; set; }
+    // [XmlAttribute("individualDropBoxId")]    // Listed on every entry but always has an empty string
+    // public string IndividualDropBoxId { get; set; }
+    [XmlAttribute("spotLevel")]
+    public int SpotLevel { get; set; }
+    [XmlAttribute("spotDropRank")]
+    public int SpotDropRank { get; set; }
+    [XmlAttribute("feature")]
+    public string Feature { get; set; }
+
+    public void Initialize() {
+        IndividualFishBoxId = ParseOptionalInt(IndividualFishBoxIdRaw);
+        //IndividualDropBoxId = ParseOptionalInt(IndividualDropBoxIdRaw);
+    }
+
+    private int ParseOptionalInt(string raw) {
+        if (string.IsNullOrWhiteSpace(raw)) return 0;
+
+        return int.TryParse(raw, out int result) ? result : 0;
+    }
 }
