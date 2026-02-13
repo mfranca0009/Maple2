@@ -1,5 +1,7 @@
-﻿using System;
+﻿using Serilog;
+using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Text.RegularExpressions;
 using System.Xml.Serialization;
@@ -7,16 +9,16 @@ using System.Xml.Serialization;
 namespace Maple2.Tools;
 
 [XmlRoot("ms2")]
-public class AdditionalEffectGroup : IXmlModel {
+public class AdditionalEffectGroup : BaseXmlModel {
     [XmlIgnore]
-    public string FilePath => $"{Environment.GetEnvironmentVariable("MS2_DATA_FOLDER")}/Server.m2d";
+    public override string FilePath => Path.Join(base.FilePath, "Server.m2d");
     [XmlIgnore]
-    public string XmlTreePath => "table/Server/additionalEffectGroup.xml";
+    public override string XmlTreePath => "table/Server/additionalEffectGroup.xml";
 
     [XmlElement("group")]
     public List<EffectGroupEntry> Entries { get; set; } = [];
 
-    public void Initialize() {
+    public override void Initialize() {
         foreach (var group in Entries) {
             foreach (var val in group.Values) {
                 val.Initialize();
@@ -26,161 +28,161 @@ public class AdditionalEffectGroup : IXmlModel {
 }
 
 [XmlRoot("ms2")]
-public class AdventureExpTable : IXmlModel {
+public class AdventureExpTable : BaseXmlModel {
     [XmlIgnore]
-    public string FilePath => $"{Environment.GetEnvironmentVariable("MS2_DATA_FOLDER")}/Server.m2d";
+    public override string FilePath => Path.Join(base.FilePath, "Server.m2d");
     [XmlIgnore]
-    public string XmlTreePath => "table/Server/AdventureExpTable.xml";
+    public override string XmlTreePath => "table/Server/AdventureExpTable.xml";
 
     [XmlElement("exp")]
     public List<AdventureExpEntry> Entries { get; set; } = [];
 
-    public void Initialize() { }
+    public override void Initialize() { }
 }
 
 [XmlRoot("ms2")]
-public class AdventureExpIdTable : IXmlModel {
+public class AdventureExpIdTable : BaseXmlModel {
     [XmlIgnore]
-    public string FilePath => $"{Environment.GetEnvironmentVariable("MS2_DATA_FOLDER")}/Server.m2d";
+    public override string FilePath => Path.Join(base.FilePath, "Server.m2d");
     [XmlIgnore]
-    public string XmlTreePath => "table/Server/AdventureIDExpTable.xml";
+    public override string XmlTreePath => "table/Server/AdventureIDExpTable.xml";
 
     [XmlElement("exp")]
     public List<AdventureExpEntry> Entries { get; set; } = [];
 
-    public void Initialize() { }
+    public override void Initialize() { }
 }
 
 [XmlRoot("ms2")]
-public class ArcadeReward : IXmlModel {
+public class ArcadeReward : BaseXmlModel {
     [XmlIgnore]
-    public string FilePath => $"{Environment.GetEnvironmentVariable("MS2_DATA_FOLDER")}/Server.m2d";
+    public override string FilePath => Path.Join(base.FilePath, "Server.m2d");
     [XmlIgnore]
-    public string XmlTreePath => "table/Server/arcadeReward.xml";
+    public override string XmlTreePath => "table/Server/arcadeReward.xml";
 
     [XmlElement("arcadeGame")]
     public List<ArcadeGameEntry> Entries { get; set; } = [];
 
-    public void Initialize() { }
+    public override void Initialize() { }
 }
 
 [XmlRoot("ms2")]
-public class AttendGift : IXmlModel {
+public class AttendGift : BaseXmlModel {
     [XmlIgnore]
-    public string FilePath => $"{Environment.GetEnvironmentVariable("MS2_DATA_FOLDER")}/Server.m2d";
+    public override string FilePath => Path.Join(base.FilePath, "Server.m2d");
     [XmlIgnore]
-    public string XmlTreePath => "table/Server/AttendGift.xml";
+    public override string XmlTreePath => "table/Server/AttendGift.xml";
 
     [XmlElement("attendGift")]
     public List<AttendGiftEntry> Entries { get; set; } = [];
 
-    public void Initialize() { }
+    public override void Initialize() { }
 }
 
 [XmlRoot("ms2")]
-public class AttendGiftEvent : IXmlModel {
+public class AttendGiftEvent : BaseXmlModel {
     [XmlIgnore]
-    public string FilePath => $"{Environment.GetEnvironmentVariable("MS2_DATA_FOLDER")}/Server.m2d";
+    public override string FilePath => Path.Join(base.FilePath, "Server.m2d");
     [XmlIgnore]
-    public string XmlTreePath => "table/Server/AttendGiftEvent.xml";
+    public override string XmlTreePath => "table/Server/AttendGiftEvent.xml";
 
     [XmlElement("attendGiftEvent")]
     public List<AttendGiftEventEntry> Entries { get; set; } = [];
 
-    public void Initialize() { }
+    public override void Initialize() { }
 }
 
 [XmlRoot("ms2")]
-public class BonusGame : IXmlModel {
+public class BonusGame : BaseXmlModel {
     [XmlIgnore]
-    public string FilePath => $"{Environment.GetEnvironmentVariable("MS2_DATA_FOLDER")}/Server.m2d";
+    public override string FilePath => Path.Join(base.FilePath, "Server.m2d");
     [XmlIgnore]
-    public string XmlTreePath => "table/Server/BonusGame.xml";
+    public override string XmlTreePath => "table/Server/BonusGame.xml";
 
     [XmlElement("game")]
     public List<BonusGameEntry> Entries { get; set; } = [];
 
-    public void Initialize() { }
+    public override void Initialize() { }
 }
 
 [XmlRoot("ms2")]
-public class BonusGameDrop : IXmlModel {
+public class BonusGameDrop : BaseXmlModel {
     [XmlIgnore]
-    public string FilePath => $"{Environment.GetEnvironmentVariable("MS2_DATA_FOLDER")}/Server.m2d";
+    public override string FilePath => Path.Join(base.FilePath, "Server.m2d");
     [XmlIgnore]
-    public string XmlTreePath => "table/Server/BonusGameDrop.xml";
+    public override string XmlTreePath => "table/Server/BonusGameDrop.xml";
 
     [XmlElement("game")]
     public List<BonusGameDropEntry> Entires { get; set; } = [];
 
-    public void Initialize() { }
+    public override void Initialize() { }
 }
 
 // Skip table/Server/CN for now
 
 [XmlRoot("ms2")]
-public class CombineSpawnGroup : IXmlModel {
+public class CombineSpawnGroup : BaseXmlModel {
     [XmlIgnore]
-    public string FilePath => $"{Environment.GetEnvironmentVariable("MS2_DATA_FOLDER")}/Server.m2d";
+    public override string FilePath => Path.Join(base.FilePath, "Server.m2d");
     [XmlIgnore]
-    public string XmlTreePath => "table/Server/combineSpawnGroup.xml";
+    public override string XmlTreePath => "table/Server/combineSpawnGroup.xml";
 
     [XmlElement("groupData")]
     public List<CombineSpawnGroupEntry> Entries { get; set; } = [];
 
-    public void Initialize() { }
+    public override void Initialize() { }
 }
 
 [XmlRoot("ms2")]
-public class CombineSpawnInteractObject : IXmlModel {
+public class CombineSpawnInteractObject : BaseXmlModel {
     [XmlIgnore]
-    public string FilePath => $"{Environment.GetEnvironmentVariable("MS2_DATA_FOLDER")}/Server.m2d";
+    public override string FilePath => Path.Join(base.FilePath, "Server.m2d");
     [XmlIgnore]
-    public string XmlTreePath => "table/Server/combineSpawnInteractObject.xml";
+    public override string XmlTreePath => "table/Server/combineSpawnInteractObject.xml";
 
     [XmlElement("spawnInteractObject")]
     public List<CombineSpawnInteractObjectEntry> Entries { get; set; } = [];
 
-    public void Initialize() { }
+    public override void Initialize() { }
 }
 
 [XmlRoot("ms2")]
-public class CombineSpawnNpc : IXmlModel {
+public class CombineSpawnNpc : BaseXmlModel {
     [XmlIgnore]
-    public string FilePath => $"{Environment.GetEnvironmentVariable("MS2_DATA_FOLDER")}/Server.m2d";
+    public override string FilePath => Path.Join(base.FilePath, "Server.m2d");
     [XmlIgnore]
-    public string XmlTreePath => "table/Server/combineSpawnNpc.xml";
+    public override string XmlTreePath => "table/Server/combineSpawnNpc.xml";
 
     [XmlElement("spawnNpc")]
     public List<CombineSpawnNpcEntry> Entries { get; set; } = [];
 
-    public void Initialize() { }
+    public override void Initialize() { }
 }
 
 [XmlRoot("ms2")]
-public class ServerConstants : IXmlModel {
+public class ServerConstants : BaseXmlModel {
     [XmlIgnore]
-    public string FilePath => $"{Environment.GetEnvironmentVariable("MS2_DATA_FOLDER")}/Server.m2d";
+    public override string FilePath => Path.Join(base.FilePath, "Server.m2d");
     [XmlIgnore]
-    public string XmlTreePath => "table/Server/constants.xml";
+    public override string XmlTreePath => "table/Server/constants.xml";
 
     [XmlElement("v")]
     public List<ConstantsEntry> Entries { get; set; } = [];
 
-    public void Initialize() { }
+    public override void Initialize() { }
 }
 
 [XmlRoot("ms2")]
-public class DefaultCharacterInfo : IXmlModel {
+public class DefaultCharacterInfo : BaseXmlModel {
     [XmlIgnore]
-    public string FilePath => $"{Environment.GetEnvironmentVariable("MS2_DATA_FOLDER")}/Server.m2d";
+    public override string FilePath => Path.Join(base.FilePath, "Server.m2d");
     [XmlIgnore]
-    public string XmlTreePath => "table/Server/defaultCharacterInfo.xml";
+    public override string XmlTreePath => "table/Server/defaultCharacterInfo.xml";
 
     [XmlElement("gender")]
     public List<DefaultCharacterInfoGenderData> Entries { get; set; } = [];
 
-    public void Initialize() {
+    public override void Initialize() {
         foreach (var gender in Entries) {
             foreach (var item in gender.Items) {
                 foreach (var control in item.Controls) {
@@ -193,11 +195,11 @@ public class DefaultCharacterInfo : IXmlModel {
 }
 
 [XmlRoot("ms2")]
-public class DesignersHomeLayout : IXmlModel {
+public class DesignersHomeLayout : BaseXmlModel {
     [XmlIgnore]
-    public string FilePath => $"{Environment.GetEnvironmentVariable("MS2_DATA_FOLDER")}/Server.m2d";
+    public override string FilePath => Path.Join(base.FilePath, "Server.m2d");
     [XmlIgnore]
-    public string XmlTreePath => $"table/Server/designersHomeLayout.xml";
+    public override string XmlTreePath => $"table/Server/designersHomeLayout.xml";
 
     [XmlElement("item")]
     public List<DesignersHomeLayoutItemEntry> ItemEntries { get; set; } = [];
@@ -205,7 +207,7 @@ public class DesignersHomeLayout : IXmlModel {
     [XmlElement("category")]
     public List<DesignersHomeLayoutCategoryEntry> CategoryEntries { get; set; } = [];
 
-    public void Initialize() {
+    public override void Initialize() {
         // Create a fast lookup map for all items based on their 'Index' property
         var itemMap = ItemEntries.ToDictionary(i => i.Index, i => i);
 
@@ -227,42 +229,42 @@ public class DesignersHomeLayout : IXmlModel {
 }
 
 [XmlRoot("ms2")]
-public class DungeonScaleStat : IXmlModel {
+public class DungeonScaleStat : BaseXmlModel {
     [XmlIgnore]
-    public string FilePath => $"{Environment.GetEnvironmentVariable("MS2_DATA_FOLDER")}/Server.m2d";
+    public override string FilePath => Path.Join(base.FilePath, "Server.m2d");
     [XmlIgnore]
-    public string XmlTreePath => "table/Server/DungeonScaleStat.xml";
+    public override string XmlTreePath => "table/Server/DungeonScaleStat.xml";
 
     [XmlElement("DungeonScaleStat")]
     public List<DungeonScaleStatEntry> Entries { get; set; } = [];
 
-    public void Initialize() { }
+    public override void Initialize() { }
 }
 
 [XmlRoot("ms2")]
-public class DungeonScoreBonus : IXmlModel {
+public class DungeonScoreBonus : BaseXmlModel {
     [XmlIgnore]
-    public string FilePath => $"{Environment.GetEnvironmentVariable("MS2_DATA_FOLDER")}/Server.m2d";
+    public override string FilePath => Path.Join(base.FilePath, "Server.m2d");
     [XmlIgnore]
-    public string XmlTreePath => "table/Server/DungeonScoreBonus.xml";
+    public override string XmlTreePath => "table/Server/DungeonScoreBonus.xml";
 
     [XmlElement("scoreBonus")]
     public List<DungeonScoreBonusEntry> Entries { get; set; } = [];
 
-    public void Initialize() { }
+    public override void Initialize() { }
 }
 
 [XmlRoot("ms2")]
-public class EnchantOptionTable : IXmlModel {
+public class EnchantOptionTable : BaseXmlModel {
     [XmlIgnore]
-    public string FilePath => $"{Environment.GetEnvironmentVariable("MS2_DATA_FOLDER")}/Server.m2d";
+    public override string FilePath => Path.Join(base.FilePath, "Server.m2d");
     [XmlIgnore]
-    public string XmlTreePath => "table/Server/enchantOptionTable.xml";
+    public override string XmlTreePath => "table/Server/enchantOptionTable.xml";
 
     [XmlElement("option")]
     public List<EnchantOptionEntry> Entries { get; set; } = [];
 
-    public void Initialize() {
+    public override void Initialize() {
         foreach (var entry in Entries) {
             entry.Initialize();
         }
@@ -270,16 +272,16 @@ public class EnchantOptionTable : IXmlModel {
 }
 
 [XmlRoot("ms2")]
-public class EnchantScroll : IXmlModel {
+public class EnchantScroll : BaseXmlModel {
     [XmlIgnore]
-    public string FilePath => $"{Environment.GetEnvironmentVariable("MS2_DATA_FOLDER")}/Server.m2d";
+    public override string FilePath => Path.Join(base.FilePath, "Server.m2d");
     [XmlIgnore]
-    public string XmlTreePath => "table/Server/enchantScroll.xml";
+    public override string XmlTreePath => "table/Server/enchantScroll.xml";
 
     [XmlElement("scroll")]
     public List<EnchantScrollEntry> Entries { get; set; } = [];
 
-    public void Initialize() {
+    public override void Initialize() {
         foreach (var entry in Entries) {
             entry.Initialize();
         }
@@ -287,16 +289,16 @@ public class EnchantScroll : IXmlModel {
 }
 
 [XmlRoot("ms2")]
-public class ExceptEpicRestart2 : IXmlModel {
+public class ExceptEpicRestart2 : BaseXmlModel {
     [XmlIgnore]
-    public string FilePath => $"{Environment.GetEnvironmentVariable("MS2_DATA_FOLDER")}/Server.m2d";
+    public override string FilePath => Path.Join(base.FilePath, "Server.m2d");
     [XmlIgnore]
-    public string XmlTreePath => "table/Server/exceptEpicRestart_2.xml";
+    public override string XmlTreePath => "table/Server/exceptEpicRestart_2.xml";
 
     [XmlElement("quest")]
     public List<ExceptEpicRestartEntry> Entries { get; set; } = [];
 
-    public void Initialize() {
+    public override void Initialize() {
         foreach (var entry in Entries) {
             entry.Initialize();
         }
@@ -304,16 +306,16 @@ public class ExceptEpicRestart2 : IXmlModel {
 }
 
 [XmlRoot("ms2")]
-public class ExceptEpicRestart : IXmlModel {
+public class ExceptEpicRestart : BaseXmlModel {
     [XmlIgnore]
-    public string FilePath => $"{Environment.GetEnvironmentVariable("MS2_DATA_FOLDER")}/Server.m2d";
+    public override string FilePath => Path.Join(base.FilePath, "Server.m2d");
     [XmlIgnore]
-    public string XmlTreePath => "table/Server/exceptEpicRestart.xml";
+    public override string XmlTreePath => "table/Server/exceptEpicRestart.xml";
 
     [XmlElement("quest")]
     public List<ExceptEpicRestartEntry> Entries { get; set; } = [];
 
-    public void Initialize() {
+    public override void Initialize() {
         foreach (var entry in Entries) {
             entry.Initialize();
         }
@@ -321,42 +323,42 @@ public class ExceptEpicRestart : IXmlModel {
 }
 
 [XmlRoot("ms2")]
-public class ExploreExpTable : IXmlModel {
+public class ExploreExpTable : BaseXmlModel {
     [XmlIgnore]
-    public string FilePath => $"{Environment.GetEnvironmentVariable("MS2_DATA_FOLDER")}/Server.m2d";
+    public override string FilePath => Path.Join(base.FilePath, "Server.m2d");
     [XmlIgnore]
-    public string XmlTreePath => "table/Server/exploreExpTable.xml";
+    public override string XmlTreePath => "table/Server/exploreExpTable.xml";
 
     [XmlElement("exp")]
     public List<ExploreExpTableEntry> Entries { get; set; } = [];
 
-    public void Initialize() { }
+    public override void Initialize() { }
 }
 
 [XmlRoot("ms2")]
-public class FieldRestrainTable : IXmlModel {
+public class FieldRestrainTable : BaseXmlModel {
     [XmlIgnore]
-    public string FilePath => $"{Environment.GetEnvironmentVariable("MS2_DATA_FOLDER")}/Server.m2d";
+    public override string FilePath => Path.Join(base.FilePath, "Server.m2d");
     [XmlIgnore]
-    public string XmlTreePath => "table/Server/fieldRestrainTable.xml";
+    public override string XmlTreePath => "table/Server/fieldRestrainTable.xml";
 
     [XmlElement("v")]
     public List<FieldRestrainTableEntry> Entries { get; set; } = [];
 
-    public void Initialize() { }
+    public override void Initialize() { }
 }
 
 [XmlRoot("ms2")]
-public class Fish : IXmlModel {
+public class Fish : BaseXmlModel {
     [XmlIgnore]
-    public string FilePath => $"{Environment.GetEnvironmentVariable("MS2_DATA_FOLDER")}/Server.m2d";
+    public override string FilePath => Path.Join(base.FilePath, "Server.m2d");
     [XmlIgnore]
-    public string XmlTreePath => "table/Server/fish.xml";
+    public override string XmlTreePath => "table/Server/fish.xml";
 
     [XmlElement("fish")]
     public List<FishEntry> Entries { get; set; } = [];
 
-    public void Initialize() {
+    public override void Initialize() {
         foreach (var entry in Entries) {
             entry.Initialize();
         }
@@ -364,16 +366,16 @@ public class Fish : IXmlModel {
 }
 
 [XmlRoot("ms2")]
-public class FishingSpot : IXmlModel {
+public class FishingSpot : BaseXmlModel {
     [XmlIgnore]
-    public string FilePath => $"{Environment.GetEnvironmentVariable("MS2_DATA_FOLDER")}/Server.m2d";
+    public override string FilePath => Path.Join(base.FilePath, "Server.m2d");
     [XmlIgnore]
-    public string XmlTreePath => "table/Server/fishingSpot.xml";
+    public override string XmlTreePath => "table/Server/fishingSpot.xml";
 
     [XmlElement("spot")]
     public List<FishingSpotEntry> Entries { get; set; } = [];
 
-    public void Initialize() {
+    public override void Initialize() {
         foreach (var entry in Entries) {
             entry.Initialize();
         }
@@ -381,16 +383,16 @@ public class FishingSpot : IXmlModel {
 }
 
 [XmlRoot("ms2")]
-public class FishLure : IXmlModel {
+public class FishLure : BaseXmlModel {
     [XmlIgnore]
-    public string FilePath => $"{Environment.GetEnvironmentVariable("MS2_DATA_FOLDER")}/Server.m2d";
+    public override string FilePath => Path.Join(base.FilePath, "Server.m2d");
     [XmlIgnore]
-    public string XmlTreePath => "table/Server/fishLure.xml";
+    public override string XmlTreePath => "table/Server/fishLure.xml";
 
     [XmlElement("lure")]
     public List<FishLureEntry> Entries { get; set; } = [];
 
-    public void Initialize() {
+    public override void Initialize() {
         foreach (var entry in Entries) {
             entry.Initialize();
         }
@@ -398,14 +400,28 @@ public class FishLure : IXmlModel {
 }
 
 [XmlRoot("ms2")]
-public class Constants : IXmlModel {
+public class GlobalDropItemBoxFinal : BaseXmlModel {
     [XmlIgnore]
-    public string FilePath => $"{Environment.GetEnvironmentVariable("MS2_DATA_FOLDER")}/Xml.m2d";
+    public override string FilePath => Path.Join(base.FilePath, "Server.m2d");
     [XmlIgnore]
-    public string XmlTreePath => "table/constants.xml";
+    public override string XmlTreePath => "table/globalDropItemBox_Final.xml";
+
+    // TODO
+
+    public override void Initialize() {
+        throw new NotImplementedException();
+    }
+}
+
+[XmlRoot("ms2")]
+public class Constants : BaseXmlModel {
+    [XmlIgnore]
+    public string FilePath => Path.Join(((BaseXmlModel)this).FilePath, "Xml.m2d");
+    [XmlIgnore]
+    public override string XmlTreePath => "table/constants.xml";
 
     [XmlElement("v")]
     public List<ConstantsEntry> Entries { get; set; } = [];
 
-    public void Initialize() { }
+    public override void Initialize() { }
 }

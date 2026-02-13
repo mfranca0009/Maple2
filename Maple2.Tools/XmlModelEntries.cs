@@ -454,20 +454,31 @@ public class ExceptEpicRestartEntry {
     public bool IsRange => MinQuestId != MaxQuestId;
 
     public void Initialize() {
-        if (string.IsNullOrWhiteSpace(QuestIdRaw)) return;
-
-        if (QuestIdRaw.Contains('-')) {
-            var parts = QuestIdRaw.Split('-');
-            if (parts.Length == 2) {
-                MinQuestId = int.Parse(parts[0].Trim());
-                MaxQuestId = int.Parse(parts[1].Trim());
-            }
-        } else {
-            MinQuestId = MaxQuestId = int.Parse(QuestIdRaw.Trim());
-        }
+        var questIdTuple = ParseRange(QuestIdRaw);
+        MinQuestId = questIdTuple.Item1;
+        MaxQuestId = questIdTuple.Item2;
     }
 
     public bool Contains(int id) => id >= MinQuestId && id <= MaxQuestId;
+
+    private Tuple<int, int> ParseRange(string raw) {
+        string[]? parts = null;
+        int min = 0;
+        int max = 0;
+        if (!string.IsNullOrWhiteSpace(raw)) {
+            if (raw.Contains('-')) {
+                parts = raw.Split('-');
+                if (parts.Length == 2) {
+                    min = int.Parse(parts[0].Trim());
+                    max = int.Parse(parts[1].Trim());
+                }
+            } else {
+                min = max = int.Parse(raw.Trim());
+            }
+        }
+
+        return new Tuple<int, int>(min, max);
+    }
 }
 
 public class ExploreExpTableEntry {	
@@ -576,29 +587,31 @@ public class FishEntry {
     public string Feature { get; set; }
 
     public void Initialize() {
-        if (!string.IsNullOrWhiteSpace(SmallSizeRaw)) {
-            if (SmallSizeRaw.Contains('-')) {
-                var parts = SmallSizeRaw.Split('-');
+        var smallSizeTuple = ParseRange(SmallSizeRaw);
+        MinSmallSize = smallSizeTuple.Item1;
+        MaxSmallSize = smallSizeTuple.Item2;
+
+        var bigSizeTuple = ParseRange(BigSizeRaw);
+        MinBigSize = bigSizeTuple.Item1;
+        MaxBigSize = bigSizeTuple.Item2;
+    }
+    private Tuple<int, int> ParseRange(string raw) {
+        string[]? parts = null;
+        int min = 0;
+        int max = 0;
+        if (!string.IsNullOrWhiteSpace(raw)) {
+            if (raw.Contains('-')) {
+                parts = raw.Split('-');
                 if (parts.Length == 2) {
-                    MinSmallSize = int.Parse(parts[0].Trim());
-                    MaxSmallSize = int.Parse(parts[1].Trim());
+                    min = int.Parse(parts[0].Trim());
+                    max = int.Parse(parts[1].Trim());
                 }
             } else {
-                MinSmallSize = MaxSmallSize = int.Parse(SmallSizeRaw.Trim());
+                min = max = int.Parse(raw.Trim());
             }
         }
 
-        if (!string.IsNullOrWhiteSpace(BigSizeRaw)) {
-            if (BigSizeRaw.Contains('-')) {
-                var parts = BigSizeRaw.Split('-');
-                if (parts.Length == 2) {
-                    MinBigSize = int.Parse(parts[0].Trim());
-                    MaxBigSize = int.Parse(parts[1].Trim());
-                }
-            } else {
-                MinBigSize = MaxBigSize = int.Parse(BigSizeRaw.Trim());
-            }
-        }
+        return new Tuple<int, int>(min, max);
     }
 }
 
@@ -606,7 +619,9 @@ public class FishingSpotEntry {
     [XmlAttribute("id")]
     public string Id { get; set; }      // All IDs have a leading zero, not sure if it's important or not, storing as string to retain the leading zero for now.
     [XmlAttribute("liquidType")]
-    public string LiquidType { get; set; }
+    public string LiquidTypeRaw { get; set; }
+    [XmlIgnore]
+    public string[] LiquidType { get; set; }
     [XmlAttribute("minMastery")]
     public int MinMastery { get; set; }
     [XmlAttribute("maxMastery")]
@@ -631,6 +646,8 @@ public class FishingSpotEntry {
     public void Initialize() {
         IndividualFishBoxId = ParseOptionalInt(IndividualFishBoxIdRaw);
         //IndividualDropBoxId = ParseOptionalInt(IndividualDropBoxIdRaw);
+
+        LiquidType = LiquidTypeRaw.Split(',');
     }
 
     private int ParseOptionalInt(string raw) {
@@ -640,7 +657,6 @@ public class FishingSpotEntry {
     }
 }
 
-// TODO - WIP
 public class FishLureEntry {
     [XmlAttribute("additionalEffectCode")]
     public int AdditionalEffectCode { get; set; }
@@ -723,29 +739,13 @@ public class FishLureEntry {
         GlobalDropRank = ParseOptionalInt(GlobalDropRankRaw);
         IndividualDropBoxId = ParseOptionalInt(IndividualDropBoxIdRaw);
 
-        if (!string.IsNullOrWhiteSpace(GlobalDropFishingSpotMasteryRaw)) {
-            if (GlobalDropFishingSpotMasteryRaw.Contains('-')) {
-                var parts = GlobalDropFishingSpotMasteryRaw.Split('-');
-                if (parts.Length == 2) {
-                    MinGlobalDropFishingSpotMastery = int.Parse(parts[0].Trim());
-                    MaxGlobalDropFishingSpotMastery = int.Parse(parts[1].Trim());
-                }
-            } else {
-                MinGlobalDropFishingSpotMastery = MaxGlobalDropFishingSpotMastery = int.Parse(GlobalDropFishingSpotMasteryRaw.Trim());
-            }
-        }
+        var globalDropFishingSpotMasteryTuple = ParseRange(GlobalDropFishingSpotMasteryRaw);
+        MinGlobalDropFishingSpotMastery = globalDropFishingSpotMasteryTuple.Item1;
+        MaxGlobalDropFishingSpotMastery = globalDropFishingSpotMasteryTuple.Item2;
 
-        if (!string.IsNullOrWhiteSpace(IndividualDropFishingSpotMasteryRaw)) {
-            if (IndividualDropFishingSpotMasteryRaw.Contains('-')) {
-                var parts = IndividualDropFishingSpotMasteryRaw.Split('-');
-                if (parts.Length == 2) {
-                    MinIndividualDropFishingSpotMastery = int.Parse(parts[0].Trim());
-                    MaxIndividualDropFishingSpotMastery = int.Parse(parts[1].Trim());
-                }
-            } else {
-                MinIndividualDropFishingSpotMastery = MaxIndividualDropFishingSpotMastery = int.Parse(IndividualDropFishingSpotMasteryRaw.Trim());
-            }
-        }
+        var individualDropFishingSpotMasteryTuple = ParseRange(IndividualDropFishingSpotMasteryRaw);
+        MinIndividualDropFishingSpotMastery = individualDropFishingSpotMasteryTuple.Item1;
+        MaxIndividualDropFishingSpotMastery = individualDropFishingSpotMasteryTuple.Item2;
     }
 
     private int[] ParseIntArray(string raw) {
@@ -759,5 +759,24 @@ public class FishLureEntry {
         if (string.IsNullOrWhiteSpace(raw)) return 0;
 
         return int.TryParse(raw, out int result) ? result : 0;
+    }
+
+    private Tuple<int, int> ParseRange (string raw) {
+        string[]? parts = null;
+        int min = 0;
+        int max = 0;
+        if (!string.IsNullOrWhiteSpace(raw)) {
+            if (raw.Contains('-')) {
+                parts = raw.Split('-');
+                if (parts.Length == 2) {
+                    min = int.Parse(parts[0].Trim());
+                    max = int.Parse(parts[1].Trim());
+                }
+            } else {
+                min = max = int.Parse(raw.Trim());
+            }
+        }
+
+        return new Tuple<int, int>(min, max);
     }
 }

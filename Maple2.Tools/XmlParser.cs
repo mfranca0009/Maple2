@@ -5,7 +5,7 @@ using System.Xml.Serialization;
 namespace Maple2.Tools;
 
 public static class XmlParser {
-    public static T? Parse<T>() where T : class, IXmlModel, new() {
+    public static T? Parse<T>() where T : BaseXmlModel, new() {
         // Trim XML string and also strip the Byte Order Mark (BOM) if present (char. code: 65279 / hex: 0xFEFF)
         string xmlString = M2dParser.ParseM2d(new T().FilePath, new T().XmlTreePath).Trim().Trim('\uFEFF', '\u200B');
 
