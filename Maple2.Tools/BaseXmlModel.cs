@@ -4,6 +4,6 @@ namespace Maple2.Tools;
 
 public abstract class BaseXmlModel {
     public virtual string FilePath => $"{Environment.GetEnvironmentVariable("MS2_DATA_FOLDER")}/";
-    public virtual string XmlTreePath { get; }
+    public virtual string XmlTreePath => string.Empty;
     public virtual void Initialize() { }
 }
