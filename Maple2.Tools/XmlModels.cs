@@ -406,11 +406,40 @@ public class GlobalDropItemBoxFinal : BaseXmlModel {
     [XmlIgnore]
     public override string XmlTreePath => "table/globalDropItemBox_Final.xml";
 
-    // TODO
+    [XmlElement("dropBox")]
+    public List<GlobalDropItemBoxFinalEntry> Entries { get; set; } = [];
 
     public override void Initialize() {
-        throw new NotImplementedException();
+        foreach (var entry in Entries) {
+            entry.Initialize();
+        }
     }
+}
+
+[XmlRoot("ms2")]
+public class GlobalDropItemSetFinal : BaseXmlModel {
+    [XmlIgnore]
+    public override string FilePath => Path.Join(base.FilePath, "Server.m2d");
+    [XmlIgnore]
+    public override string XmlTreePath => "table/globalDropItemSet_Final.xml";
+
+    [XmlElement("dropBox")]
+    public List<GlobalDropItemSetFinalEntry> Entries { get; set; } = [];
+
+    public override void Initialize() { }
+}
+
+[XmlRoot("ms2")]
+public class GlobalEquipmentRankProbability : BaseXmlModel {
+    [XmlIgnore]
+    public override string FilePath => Path.Join(base.FilePath, "Server.m2d");
+    [XmlIgnore]
+    public override string XmlTreePath => "table/globalEquipmentRankProbability.xml";
+
+    [XmlElement("DropProbability")]
+    public List<GlobalEquipmentRankProbabilityEntry> Entries { get; set; } = [];
+
+    public override void Initialize() { }
 }
 
 [XmlRoot("ms2")]

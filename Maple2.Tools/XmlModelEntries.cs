@@ -780,3 +780,95 @@ public class FishLureEntry {
         return new Tuple<int, int>(min, max);
     }
 }
+
+public class GlobalDropItemBoxFinalEntry {
+    [XmlAttribute("dropBoxID")]
+    public int DropBoxId { get; set; }
+    [XmlAttribute("comment")]
+    public string Comment { get; set; }
+    [XmlElement("v")]
+    List<GlobalDropItemBoxFinalDropBoxItem> DropBoxItems { get; set; } = [];
+
+    public void Initialize() {
+        foreach (var item in DropBoxItems) {
+            item.Initialize();
+        }
+    }
+}
+
+public class GlobalDropItemBoxFinalDropBoxItem {
+    [XmlAttribute("dropGroupIDs")]
+    public int DropGroupIds { get; set; }   // Not sure why it is plural, there is only a single value from all entries
+    [XmlAttribute("minLevel")]
+    public int MinLevel { get; set; }
+    [XmlAttribute("maxLevel")]
+    public int MaxLevel { get; set; }
+    [XmlAttribute("dropCount")]
+    public string DropCountRaw { get; set; }
+    [XmlIgnore]
+    public int[] DropCount { get; set; }
+    [XmlAttribute("dropCountProbability")]
+    public string DropCountProbabilityRaw { get; set; }
+    [XmlIgnore]
+    public int[] DropCountProbability { get; set; }
+    [XmlAttribute("continentCondition")]
+    public int ContinentCondition { get; set; }
+    [XmlAttribute("mapTypeCondition")]
+    public int MapTypeCondition { get; set; }
+    [XmlAttribute("isOwnerDrop")]
+    public bool IsOwnerDrop { get; set; }
+    [XmlAttribute("reference1")]
+    public string Reference1 { get; set; }
+
+    public void Initialize() {
+        DropCount = ParseIntArray(DropCountRaw);
+        DropCountProbability = ParseIntArray(DropCountProbabilityRaw);
+    }
+
+    private int[] ParseIntArray(string raw) {
+        if (string.IsNullOrWhiteSpace(raw)) return Array.Empty<int>();
+        return raw.Split(',').Select(s => int.Parse(s.Trim())).ToArray();
+    }
+}
+
+public class GlobalDropItemSetFinalEntry {
+    [XmlAttribute("dropGroupID")]
+    public int DropGroupId { get; set; }
+    [XmlAttribute("comment")]
+    public string comment { get; set; }
+    [XmlElement("v")]
+    public List<GlobalDropItemSetItem> GlobalDropItemSetItems { get; set; } = [];
+}
+
+public class GlobalDropItemSetItem {
+    [XmlAttribute("itemID")]
+    public int ItemId { get; set; }
+    [XmlAttribute("constraintsQuest")]
+    public bool ConstraintsQuest { get; set; }
+    [XmlAttribute("mapDependency")]
+    public int MapDependency { get; set; }
+    [XmlAttribute("weight")]
+    public int weight { get; set; }
+    [XmlAttribute("assistBonus")]
+    public bool AssistBonus { get; set; }
+    [XmlAttribute("locale")]
+    public string Locale { get; set; }
+    [XmlAttribute("minCount")]
+    public int MinCount { get; set; }
+    [XmlAttribute("maxCount")]
+    public int MaxCount { get; set; }
+    [XmlAttribute("uiItemRank")]
+    public int UiItemRank { get; set; }
+    [XmlAttribute("grade")]
+    public int Grade { get; set; }
+    [XmlAttribute("minLevel")]
+    public int MinLevel { get; set; }
+    [XmlAttribute("maxLevel")]
+    public int MaxLevel { get; set; }
+}
+
+public class GlobalEquipmentRankProbabilityEntry {
+    // 	<DropProbability npcRank="920" npcLevel="99" assistCondition="1" Rare="0" Elite="0" Excellent="100" Legendary="0" />
+    [XmlAttribute("npcRank")]
+    public int NpcRank { get; set; }
+}

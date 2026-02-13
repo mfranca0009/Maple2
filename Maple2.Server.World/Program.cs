@@ -51,6 +51,9 @@ var fieldRestrainTable = XmlParser.Parse<FieldRestrainTable>();
 var fish = XmlParser.Parse<Fish>();
 var fishingSpot = XmlParser.Parse<FishingSpot>();
 var fishLure = XmlParser.Parse<FishLure>();
+var globalDropItemBoxFinal = XmlParser.Parse<GlobalDropItemBoxFinal>();
+var globalDropItemSetFinal = XmlParser.Parse<GlobalDropItemSetFinal>();
+
 
 // Xml.m2d
 var constants = XmlParser.Parse<Constants>();
