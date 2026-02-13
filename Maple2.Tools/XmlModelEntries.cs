@@ -639,3 +639,125 @@ public class FishingSpotEntry {
         return int.TryParse(raw, out int result) ? result : 0;
     }
 }
+
+// TODO - WIP
+public class FishLureEntry {
+    [XmlAttribute("additionalEffectCode")]
+    public int AdditionalEffectCode { get; set; }
+    [XmlAttribute("additionalEffectLevel")]
+    public int AdditionalEffectLevel { get; set; }
+    // [XmlAttribute("fishCode")]       // Always blank in fishLure.xml
+    // public string FishCode { get; set; }
+    [XmlAttribute("catchRank")]
+    public string CatchRankRaw { get; set; }
+    [XmlIgnore]
+    public int[] CatchRank { get; set; }
+    [XmlAttribute("catchProp")]
+    public string CatchPropRaw { get; set; }
+    [XmlIgnore]
+    public int[] CatchProp { get; set; }
+    [XmlAttribute("spawnRank")]
+    public string SpawnRankRaw { get; set; }
+    [XmlIgnore]
+    public int[] SpawnRank { get; set; }
+    [XmlAttribute("spawnProp")]
+    public string SpawnPropRaw { get; set; }
+    [XmlIgnore]
+    public int[] SpawnProp { get; set; }
+    [XmlAttribute("spawnFish")]
+    public string SpawnFishRaw { get; set; }
+    [XmlIgnore]
+    public int[] SpawnFish { get; set; }
+    [XmlAttribute("spawnFishRate")]
+    public string SpawnFishRateRaw { get; set; }
+    [XmlIgnore]
+    public int[] SpawnFishRate { get; set; }
+    [XmlAttribute("fishSize")]
+    public string FishSizeRaw { get; set; }
+    [XmlIgnore]
+    public int FishSize { get; set; }
+    [XmlAttribute("fishSizeProp")]
+    public string FishSizePropRaw { get; set; }
+    [XmlIgnore]
+    public int FishSizeProp { get; set; }
+    [XmlAttribute("globalDropBoxID")]
+    public string GlobalDropBoxIdRaw { get; set; }
+    [XmlIgnore]
+    public int GlobalDropBoxId { get; set; }
+    [XmlAttribute("globalDropRank")]
+    public string GlobalDropRankRaw { get; set; }
+    [XmlIgnore]
+    public int GlobalDropRank { get; set; }
+    [XmlAttribute("globalDropFishingSpotMastery")]
+    public string GlobalDropFishingSpotMasteryRaw { get; set; }
+    [XmlIgnore]
+    public int MinGlobalDropFishingSpotMastery { get; set; }
+    [XmlIgnore]
+    public int MaxGlobalDropFishingSpotMastery { get; set; }
+    [XmlAttribute("individualDropBoxID")]
+    public string IndividualDropBoxIdRaw { get; set; }
+    [XmlIgnore]
+    public int IndividualDropBoxId { get; set; }
+    // [XmlAttribute("individualDropRank")]         // Always blank in fishLure.xml
+    // public string IndividualDropRank { get; set; }
+    [XmlAttribute("individualDropFishingSpotMastery")]
+    public string IndividualDropFishingSpotMasteryRaw { get; set; }
+    [XmlIgnore]
+    public int MinIndividualDropFishingSpotMastery { get; set; }
+    [XmlIgnore]
+    public int MaxIndividualDropFishingSpotMastery { get; set; }
+    [XmlAttribute("feature")]
+    public string Feature { get; set; }
+
+    public void Initialize() {
+        CatchRank = ParseIntArray(CatchRankRaw);
+        CatchProp = ParseIntArray(CatchPropRaw);
+        SpawnRank = ParseIntArray(SpawnRankRaw);
+        SpawnProp = ParseIntArray(SpawnPropRaw);
+        SpawnFish = ParseIntArray(SpawnFishRaw);
+        SpawnFishRate = ParseIntArray(SpawnFishRateRaw);
+
+        FishSize = ParseOptionalInt(FishSizeRaw);
+        FishSizeProp = ParseOptionalInt(FishSizePropRaw);
+        GlobalDropBoxId = ParseOptionalInt(GlobalDropBoxIdRaw);
+        GlobalDropRank = ParseOptionalInt(GlobalDropRankRaw);
+        IndividualDropBoxId = ParseOptionalInt(IndividualDropBoxIdRaw);
+
+        if (!string.IsNullOrWhiteSpace(GlobalDropFishingSpotMasteryRaw)) {
+            if (GlobalDropFishingSpotMasteryRaw.Contains('-')) {
+                var parts = GlobalDropFishingSpotMasteryRaw.Split('-');
+                if (parts.Length == 2) {
+                    MinGlobalDropFishingSpotMastery = int.Parse(parts[0].Trim());
+                    MaxGlobalDropFishingSpotMastery = int.Parse(parts[1].Trim());
+                }
+            } else {
+                MinGlobalDropFishingSpotMastery = MaxGlobalDropFishingSpotMastery = int.Parse(GlobalDropFishingSpotMasteryRaw.Trim());
+            }
+        }
+
+        if (!string.IsNullOrWhiteSpace(IndividualDropFishingSpotMasteryRaw)) {
+            if (IndividualDropFishingSpotMasteryRaw.Contains('-')) {
+                var parts = IndividualDropFishingSpotMasteryRaw.Split('-');
+                if (parts.Length == 2) {
+                    MinIndividualDropFishingSpotMastery = int.Parse(parts[0].Trim());
+                    MaxIndividualDropFishingSpotMastery = int.Parse(parts[1].Trim());
+                }
+            } else {
+                MinIndividualDropFishingSpotMastery = MaxIndividualDropFishingSpotMastery = int.Parse(IndividualDropFishingSpotMasteryRaw.Trim());
+            }
+        }
+    }
+
+    private int[] ParseIntArray(string raw) {
+        if (string.IsNullOrWhiteSpace(raw)) return [];
+        return raw.Split(',')
+            .Select(s => int.Parse(s.Trim()))
+            .ToArray();
+    }
+
+    private int ParseOptionalInt(string raw) {
+        if (string.IsNullOrWhiteSpace(raw)) return 0;
+
+        return int.TryParse(raw, out int result) ? result : 0;
+    }
+}

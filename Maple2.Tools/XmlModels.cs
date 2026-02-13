@@ -381,6 +381,23 @@ public class FishingSpot : IXmlModel {
 }
 
 [XmlRoot("ms2")]
+public class FishLure : IXmlModel {
+    [XmlIgnore]
+    public string FilePath => $"{Environment.GetEnvironmentVariable("MS2_DATA_FOLDER")}/Server.m2d";
+    [XmlIgnore]
+    public string XmlTreePath => "table/Server/fishLure.xml";
+
+    [XmlElement("lure")]
+    public List<FishLureEntry> Entries { get; set; } = [];
+
+    public void Initialize() {
+        foreach (var entry in Entries) {
+            entry.Initialize();
+        }
+    }
+}
+
+[XmlRoot("ms2")]
 public class Constants : IXmlModel {
     [XmlIgnore]
     public string FilePath => $"{Environment.GetEnvironmentVariable("MS2_DATA_FOLDER")}/Xml.m2d";

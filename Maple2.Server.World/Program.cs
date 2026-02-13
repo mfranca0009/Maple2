@@ -50,6 +50,7 @@ var exploreExpTable = XmlParser.Parse<ExploreExpTable>();
 var fieldRestrainTable = XmlParser.Parse<FieldRestrainTable>();
 var fish = XmlParser.Parse<Fish>();
 var fishingSpot = XmlParser.Parse<FishingSpot>();
+var fishLure = XmlParser.Parse<FishLure>();
 
 // Xml.m2d
 var constants = XmlParser.Parse<Constants>();
