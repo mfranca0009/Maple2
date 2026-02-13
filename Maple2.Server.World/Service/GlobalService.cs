@@ -21,7 +21,7 @@ public partial class GlobalService : Global.GlobalBase {
     }
 
     public override Task<LoginResponse> Login(LoginRequest request, ServerCallContext context) {
-#if !DEBUG // Allow empty username for testing
+
         if (string.IsNullOrWhiteSpace(request.Username)) {
             return Task.FromResult(new LoginResponse {
                 Code = LoginResponse.Types.Code.ErrorId,
@@ -35,7 +35,6 @@ public partial class GlobalService : Global.GlobalBase {
                 Message = "Invalid Password.",
             });
         }
-#endif
 
         // Normalize username
         string username = request.Username.Trim().ToLower();
@@ -89,7 +88,10 @@ public partial class GlobalService : Global.GlobalBase {
             });
         }
 
-        if (account.MachineId != machineId) {
+        if (account.MachineId == null) {
+            db.UpdateMachineId(account.Id, machineId);
+        }
+        else if (account.MachineId != machineId) {
             logger.Warning("MachineId mismatch for account {AccountId}", account.Id);
             if (Constant.BlockLoginWithMismatchedMachineId) {
                 return Task.FromResult(new LoginResponse {
@@ -97,10 +99,6 @@ public partial class GlobalService : Global.GlobalBase {
                     Message = "MachineId mismatch",
                 });
             }
-        }
-
-        if (account.MachineId == default) {
-            db.UpdateMachineId(account.Id, machineId);
         }
 
         (bool IsBanned, Ban? Ban) status = db.GetBanStatus(account.Id, clientIp, machineId);
