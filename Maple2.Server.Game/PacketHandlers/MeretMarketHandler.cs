@@ -301,6 +301,7 @@ public class MeretMarketHandler : FieldPacketHandler {
 
 
         session.Send(MeretMarketPacket.Purchase(totalQuantity, itemIndex, price, premiumMarketId, ugcItemId));
+        session.ConditionUpdate(ConditionType.use_merat, counter: price, codeLong: item.Id);
         return;
 
         PlayerInfo? GetGiftedPlayerInfo(GameSession session, string name) {

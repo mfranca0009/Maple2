@@ -64,6 +64,9 @@ public static class ConditionUtil {
             case ConditionType.set_mastery_grade:
             case ConditionType.item_add:
             case ConditionType.item_destroy:
+            case ConditionType.use_merat:
+            case ConditionType.shop_buy:
+            case ConditionType.shop_sell:
             case ConditionType.beauty_add:
             case ConditionType.beauty_change_color:
             case ConditionType.beauty_random:
@@ -122,6 +125,7 @@ public static class ConditionUtil {
             case ConditionType.hero_achieve_grade:
             case ConditionType.stay_map:
             case ConditionType.stay_cube:
+            case ConditionType.dungeon_clear:
                 if (code.Range != null && InRange((ConditionMetadata.Range<int>) code.Range, (int) longValue)) {
                     return true;
                 }
@@ -276,6 +280,9 @@ public static class ConditionUtil {
             case ConditionType.item_add:
             case ConditionType.item_pickup:
             case ConditionType.item_destroy:
+            case ConditionType.use_merat:
+            case ConditionType.shop_buy:
+            case ConditionType.shop_sell:
             case ConditionType.beauty_add:
             case ConditionType.beauty_change_color:
             case ConditionType.beauty_random:
