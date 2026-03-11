@@ -277,6 +277,7 @@ public static class ConditionUtil {
             case ConditionType.music_play_grade:
             case ConditionType.music_play_ensemble:
             case ConditionType.music_play_instrument_mastery:
+            case ConditionType.item_exist:
             case ConditionType.item_add:
             case ConditionType.item_pickup:
             case ConditionType.item_destroy:
@@ -334,6 +335,7 @@ public static class ConditionUtil {
             case ConditionType.send_mail:
             case ConditionType.change_ugc_equip:
             case ConditionType.unlimited_enchant:
+            case ConditionType.dungeon_clear:
                 return true;
         }
         return false;
