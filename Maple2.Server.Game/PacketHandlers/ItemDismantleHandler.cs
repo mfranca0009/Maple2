@@ -114,6 +114,7 @@ public class ItemDismantleHandler : FieldPacketHandler {
 
         // TODO: Confirm inventory can hold all the items.
         lock (session.Item) {
+            int totalDismantleCount = 0;
             var rewards = new Dictionary<int, (int Min, int Max)>();
             for (short slot = 0; slot < session.DismantleStaging.Length; slot++) {
                 (long uid, int amount) = session.DismantleStaging[slot];
@@ -121,6 +122,8 @@ public class ItemDismantleHandler : FieldPacketHandler {
                 if (item == null) {
                     continue;
                 }
+
+                totalDismantleCount += amount;
 
                 // If failed to consume, remove slot.
                 if (!session.Item.Inventory.Consume(uid, amount)) {
@@ -152,6 +155,7 @@ public class ItemDismantleHandler : FieldPacketHandler {
                 }
             }
 
+            session.ConditionUpdate(ConditionType.item_break, counter: totalDismantleCount);
             session.Send(ItemDismantlePacket.Result(result));
         }
     }

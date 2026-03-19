@@ -170,6 +170,7 @@ public static class ConditionUtil {
             case ConditionType.wedding_propose_decline:
             case ConditionType.wedding_propose_declined:
             case ConditionType.wedding_hall_cancel:
+            case ConditionType.item_break:
             case ConditionType.item_gear_score:
             case ConditionType.revival:
             case ConditionType.home_doctor:
@@ -324,6 +325,7 @@ public static class ConditionUtil {
             case ConditionType.explore_continent:
             case ConditionType.continent:
             case ConditionType.explore:
+            case ConditionType.item_break:
             case ConditionType.item_gear_score:
             case ConditionType.revival:
             case ConditionType.home_doctor:
