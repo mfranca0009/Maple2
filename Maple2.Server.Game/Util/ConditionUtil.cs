@@ -62,6 +62,7 @@ public static class ConditionUtil {
             case ConditionType.fisher_grade:
             case ConditionType.mastery_grade:
             case ConditionType.set_mastery_grade:
+            case ConditionType.item_inven:
             case ConditionType.item_add:
             case ConditionType.item_destroy:
             case ConditionType.use_merat:
@@ -279,6 +280,7 @@ public static class ConditionUtil {
             case ConditionType.music_play_ensemble:
             case ConditionType.music_play_instrument_mastery:
             case ConditionType.item_exist:
+            case ConditionType.item_inven:
             case ConditionType.item_add:
             case ConditionType.item_pickup:
             case ConditionType.item_destroy:
