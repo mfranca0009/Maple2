@@ -515,6 +515,9 @@ public class FieldNpc : Actor<Npc> {
                 foreach (string tag in Value.Metadata.Basic.MainTags) {
                     player.Session.ConditionUpdate(ConditionType.npc_race, codeString: tag);
                 }
+                if (player.ObjectId == lastAttackerObjectId) {
+                    player.Session.ConditionUpdate(ConditionType.npc_lasthit, codeLong: Value.Id, targetLong: Field.MapId);
+                }
             }
         } else {
             // Regular mob: first attacker is tagged and receives all drops.

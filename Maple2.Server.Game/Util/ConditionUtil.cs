@@ -95,6 +95,7 @@ public static class ConditionUtil {
             case ConditionType.dialogue:
             case ConditionType.talk_in:
             case ConditionType.npc:
+            case ConditionType.npc_lasthit:
             case ConditionType.skill:
             case ConditionType.job:
             case ConditionType.job_change:
@@ -227,6 +228,7 @@ public static class ConditionUtil {
             case ConditionType.install_billboard:
             case ConditionType.item_move:
             case ConditionType.npc:
+            case ConditionType.npc_lasthit:
                 if (target.Integers != null && target.Integers.Any(value => longValue >= value)) {
                     return true;
                 }
