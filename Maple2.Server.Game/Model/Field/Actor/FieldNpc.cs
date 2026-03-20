@@ -528,6 +528,8 @@ public class FieldNpc : Actor<Npc> {
 
             DropGlobalLoot(taggedPlayer!.Value.Character.Id);
             DropIndividualLoot(taggedPlayer);
+            taggedPlayer.ComboKillCount++;
+            taggedPlayer.Session.ConditionUpdate(ConditionType.killcount, counter: 1);
 
             foreach (KeyValuePair<int, DamageRecordTarget> damageDealer in DamageDealers) {
                 if (!Field.TryGetPlayer(damageDealer.Key, out FieldPlayer? player)) {

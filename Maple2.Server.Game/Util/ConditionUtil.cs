@@ -174,6 +174,7 @@ public static class ConditionUtil {
             case ConditionType.wedding_hall_cancel:
             case ConditionType.item_break:
             case ConditionType.item_gear_score:
+            case ConditionType.killcount:
             case ConditionType.revival:
             case ConditionType.home_doctor:
             case ConditionType.resolve_panelty:
@@ -331,6 +332,7 @@ public static class ConditionUtil {
             case ConditionType.explore:
             case ConditionType.item_break:
             case ConditionType.item_gear_score:
+            case ConditionType.killcount:
             case ConditionType.revival:
             case ConditionType.home_doctor:
             case ConditionType.resolve_panelty:

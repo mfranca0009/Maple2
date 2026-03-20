@@ -70,6 +70,8 @@ public class FieldPlayer : Actor<Player> {
 
     public Tombstone? Tombstone { get; set; }
 
+    public int ComboKillCount { get; set; }
+
     public DeathState DeathState {
         get => Value.Character.DeathState;
         set {
@@ -170,6 +172,8 @@ public class FieldPlayer : Actor<Player> {
 
         if (InBattle && tickCount - battleTick > Constant.UserBattleDurationTick) {
             InBattle = false;
+            Session.ConditionUpdate(ConditionType.killcount, counter: -ComboKillCount);
+            ComboKillCount = 0;
         }
 
         UpdateStateSkill();
